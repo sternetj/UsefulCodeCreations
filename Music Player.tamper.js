@@ -17,7 +17,11 @@ theEvent.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false
 
 // click the first link
 
-var index = getRandom(0, links.length);
+//var index = getRandom(0, links.length);
+//get first index
+var items = makeItemArray();
+var index = getRandom();
+
 //alert(index);
 links[index].dispatchEvent(theEvent);
 //links.remove(index);
@@ -44,7 +48,7 @@ function musicplayer1()
     }
     else{
         //alert("next song!");
-        var index = getRandom(0, links.length);
+        var index = getRandom();
         //var index = 15;
         links[index].dispatchEvent(theEvent);
         //links.splice(index, 1);
@@ -53,6 +57,24 @@ function musicplayer1()
     }
 }
 
-function getRandom(minimum, maximum){
-    return Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;   
+//Creates an array of all possible indices in the links array
+function makeItemArray(){
+    var itemArray = [];
+    for (var i = 0; i < links.length; i++) { 
+    	itemArray.push(i);
+	}
+    return itemArray;
+}
+
+//Gets random from index array, removes it, and returns index
+function getRandom(){
+    if (items.length == 0){
+     	alert("All songs have been played!")
+        items = makeItemArray();
+    }
+    var i = Math.floor(Math.random()*items.length)
+    var item = items[i]
+    items.splice(i, 1);
+
+    return item;  
 }
