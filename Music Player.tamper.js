@@ -7,6 +7,10 @@
 // @copyright  2012+, You
 // ==/UserScript==
 
+// var inject = '<div style="position:fixed;top:5px;right:5px;width:75px;height:75px;z-index:100;background:#eb295c;text-align:center;vertical-align:center;">';
+// inject += '<p style="color:#FFF;">Test</p>';
+// inject += '</div>';
+// document.body.innerHTML += inject;
 
 // get all 'play' class links
 var links = document.getElementsByClassName('play'); // get all links
@@ -57,7 +61,6 @@ function musicplayer1()
     }
 }
 
-//Creates an array of all possible indices in the links array
 function makeItemArray(){
     var itemArray = [];
     for (var i = 0; i < links.length; i++) { 
