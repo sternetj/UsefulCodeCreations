@@ -42,11 +42,27 @@ var node = document.createTextNode('Song: 1 of ' + links.length);
 para.appendChild(node);
 elemDiv.appendChild(para);
 
+//Back Arrow
+var anc2 = document.createElement("a");
+anc2.style.cssText = '-webkit-filter: invert(100%);padding-top:10px;padding-right:-5px;cursor: pointer; cursor: hand;font-size: 20px;';
+anc2.innerHTML = '<img src="http://www.flaticon.com/png/256/25641.png" alt="Prev" width="44" height="30">';
+anc2.addEventListener('click',doOverride,false);
+elemDiv.appendChild(anc2);
+
+//Pause
 var anc = document.createElement("a");
-anc.style.cssText = 'padding-top:10px;font-weight:bold;font-family:Arial,Helvetica,sans-serif;color:#FFF;cursor: pointer; cursor: hand;font-size: 20px;';
-anc.innerHTML = 'Next';
-anc.addEventListener('click',doOverride,false);
+anc.style.cssText = '-webkit-filter: invert(100%);padding-top:10px;cursor: pointer; cursor: hand;font-size: 20px;';
+//anc.innerHTML = 'Next';
+anc.innerHTML = '<img src="http://www.flaticon.com/png/256/25696.png" alt="Pause" width="44" height="30">';
+anc.addEventListener('click',doPlayPause,false);
 elemDiv.appendChild(anc);
+
+//Next
+var anc3 = document.createElement("a");
+anc3.style.cssText = '-webkit-filter: invert(100%);padding-top:10px;padding-left:-5px;cursor: pointer; cursor: hand;font-size: 20px;';
+anc3.innerHTML = '<img src="http://www.flaticon.com/png/256/25309.png" alt="Prev" width="44" height="30">';
+anc3.addEventListener('click',doOverride,false);
+elemDiv.appendChild(anc3);
 
 var override = false;
 
@@ -55,8 +71,8 @@ function musicplayer1()
 {
     //setTimeout(function() { alert('hello');}, 3000); //defer the execution of anonymous function for 3 seconds and go to next line of code.
     //alert(player);
-    var playing = player.isPlaying()
-    var paused = player.isPaused()
+    var playing = player.isPlaying();
+    var paused = player.isPaused();
     
     if (override){
         playing = false;
@@ -107,5 +123,19 @@ function getRandom(){
 
 function doOverride(){
     override = true;
+    musicplayer1();
+}
+
+function doPlayPause(){
+    var playing = player.isPlaying();
+    
+    if (playing){
+        player.pause();
+        anc.innerHTML = '<img src="http://www.flaticon.com/png/256/25226.png" alt="Pause" width="30" height="30">';
+    }
+    else {
+        player.play();
+        anc.innerHTML = '<img src="http://www.flaticon.com/png/256/25696.png" alt="Pause" width="30" height="30">';
+    }
     musicplayer1();
 }
