@@ -1,0 +1,16 @@
+<html>
+<head>
+<script>
+function getRandomColor() {
+    var letters = '0123456789ABCDEF'.split('');
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.round(Math.random() * 15)];
+    }
+	document.body.style.background = color;
+}
+</script>
+<body onload="getRandomColor();">
+<button type="button" onclick="getRandomColor();">Click me!</button>
+</body>
+</html>
