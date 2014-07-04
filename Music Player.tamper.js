@@ -163,3 +163,14 @@ function doPlayPrevious(){
     	musicplayer1();
     }
 }
+
+window.onkeydown = function (e) {
+    var code = e.keyCode ? e.keyCode : e.which;
+    if (code === 32) { //space bar
+        doPlayPause();
+    } else if (code === 190) { //> key
+        doOverride();
+    } else if (code === 188) { //< key
+        doPlayPrevious();
+    }
+};
