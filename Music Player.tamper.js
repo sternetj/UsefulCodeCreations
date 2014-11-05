@@ -8,7 +8,26 @@
 // ==/UserScript==
 
 // get all 'play' class links
-var links = document.getElementsByClassName('play'); // get all links
+var mainBlock = document.getElementById( 'mainBlock' );
+var links = document.getElementsByClassName('play'); // get all links 
+
+if (mainBlock != null){
+	links = mainBlock.getElementsByClassName('play'); // get all links
+}
+
+var nonDups = [];
+for (var i = 0; i < links.length; i++) {
+    for (var j = 0; j < links.length; j++) {
+        if (links[i].title == links[j].title){
+            if (i == j){
+                nonDups.push(links[i]);
+            }
+            break;
+        }
+	}
+}
+
+links = nonDups;
 
 // create click event
 var theEvent = document.createEvent("MouseEvent");
@@ -65,6 +84,7 @@ var override = false;
 var played = [];
 var toPlay = [];
 var olderIndex = -1;
+var durationSet = false;
 
 played.push(index);
 
@@ -73,6 +93,7 @@ function musicplayer1()
 {
     var playing = player.isPlaying();
     var paused = player.isPaused();
+    //alert(player.getPlaylist()[0]['fullDuration']);
     
     if (override){
         playing = false;
@@ -80,9 +101,25 @@ function musicplayer1()
         override = false;
     }
     if (playing){
+        
         //Change image to pause button
         play_pause.innerHTML = '<img src="http://www.flaticon.com/png/256/25696.png" alt="Pause" width="30" height="30">';
-        setTimeout(musicplayer1, 10000);
+        
+        if (durationSet){
+        	setTimeout(musicplayer1, 10000);
+        }
+        else{
+            try {
+            	var delay = parseFloat(player.getClip()['fullDuration']) * 1000;
+                delay = delay - 10000;
+            	setTimeout(musicplayer1, delay);
+            	durationSet = true;
+            }
+            catch(err) {
+                durationSet = false;
+            }
+
+        }
     }
     else if (paused){
         //Change image to play button
@@ -105,8 +142,10 @@ function musicplayer1()
         //Update the song string to reflect current track number
         song_string.nodeValue = 'Song: ' + (links.length - items.length + Math.max(-1*toPlay.length, 0)) + ' of ' + links.length;
         
-        //Click on the new son to have it start playing
+        //Click on the new song to have it start playing
         links[index].dispatchEvent(theEvent);
+        
+        durationSet = false;
         
        	setTimeout(musicplayer1, 10000);
     }
