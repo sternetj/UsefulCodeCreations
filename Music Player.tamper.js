@@ -40,6 +40,37 @@ transform: rotateY(0deg); \
 transform: rotateY(180deg); \
 }';
 
+document.addEventListener('DOMContentLoaded',
+                          function () {
+                              if (Notification && Notification.permission !== "granted"){
+                                  Notification.requestPermission();
+                              }
+                          });
+
+var notify = function(){
+    if (Notification){
+        if (Notification && Notification.permission !== "granted"){
+            Notification.requestPermission();
+        }else{
+            var info = links[index].title.replace("Listen to '", "").split("' by ");
+            var track = info[0];
+            var artist = info[1];
+            console.log(links[index].parentNode);
+            console.log(links[index].parentNode.nextSibling.nextSibling);
+            var image = links[index].parentNode.nextSibling.nextSibling.src;
+            var nt = new Notification(track, {
+                icon: image,
+                body: 'by ' + artist,
+            });
+
+            nt.onclick = function () { nt.close();};
+            setTimeout(function(){
+                nt.close();
+            },120000);
+        }
+    }
+}
+
 var head = document.head || document.getElementsByTagName('head')[0],
     style = document.createElement('style');
 
@@ -90,6 +121,9 @@ var index = getRandom();
 
 //click the first link
 links[index].dispatchEvent(theEvent);
+notify();
+
+console.log(links[index]);
 
 //check in on what the player is doing in 10 seconds
 setTimeout(musicplayer1, 10000);
@@ -167,17 +201,17 @@ function musicplayer1()
     var playing = player.isPlaying();
     var paused = player.isPaused();
     //alert(player.getPlaylist()[0]['fullDuration']);
-    
+
     if (override){
         playing = false;
         paused = false;
         override = false;
     }
     if (playing){
-        
+
         //Change image to pause button
         play_pause.innerHTML = '<img src="http://www.flaticon.com/png/256/25696.png" alt="Pause" width="30" height="30">';
-        
+
         if (durationSet){
             setTimeout(musicplayer1, 10000);
         }
@@ -191,7 +225,7 @@ function musicplayer1()
             catch(err) {
                 durationSet = false;
             }
-            
+
         }
     }
     else if (paused){
@@ -199,29 +233,31 @@ function musicplayer1()
         play_pause.innerHTML = '<img src="http://www.flaticon.com/png/256/25226.png" alt="Play" width="30" height="30">';
         setTimeout(musicplayer1, 10000);
     }
-        else{
-            olderIndex = index; // Set the last played song to allow for repeating songs
-            
-            //Check for songs to be played and play them first if they exist
-            if (toPlay.length > 0){
-                index = toPlay.pop();
-            }else{
-                index = getRandom();
-            }
-            
-            //Add the index to the played list
-            played.push(index);
-            
-            //Update the song string to reflect current track number
-            song_string.nodeValue = 'Song: ' + (links.length - items.length + Math.max(-1*toPlay.length, 0)) + ' of ' + links.length;
-            
-            //Click on the new song to have it start playing
-            links[index].dispatchEvent(theEvent);
-            
-            durationSet = false;
-            
-            setTimeout(musicplayer1, 10000);
+    else{
+        olderIndex = index; // Set the last played song to allow for repeating songs
+
+        //Check for songs to be played and play them first if they exist
+        if (toPlay.length > 0){
+            index = toPlay.pop();
+        }else{
+            index = getRandom();
         }
+
+        //Add the index to the played list
+        played.push(index);
+
+        //Update the song string to reflect current track number
+        song_string.nodeValue = 'Song: ' + (links.length - items.length + Math.max(-1*toPlay.length, 0)) + ' of ' + links.length;
+
+        //Click on the new song to have it start playing
+        links[index].dispatchEvent(theEvent);
+
+        notify();
+
+        durationSet = false;
+
+        setTimeout(musicplayer1, 10000);
+    }
 }
 
 function makeItemArray(){
@@ -235,7 +271,7 @@ function makeItemArray(){
 //Gets random from index array, removes it, and returns index
 function getRandom(){
     if (items.length == 0){
-	    var nonDups = [];
+        var nonDups = [];
         for (var i = 0; i < links.length; i++) {
             for (var j = 0; j < links.length; j++) {
                 if ((links[i].title == links[j].title && i == j) && dislikes.indexOf(links[i].title) == -1){
@@ -250,7 +286,7 @@ function getRandom(){
     var i = Math.floor(Math.random()*items.length);
     var item = items[i];
     items.splice(i, 1);
-    
+
     return item;  
 }
 
@@ -266,12 +302,12 @@ function doDislike(){
         }
         dislikes = localStorage.dislikeList.split(',');
         console.log(dislikes);
-        
+
         dislikes += ((dislikes == "") ? '' : ',') + links[index].title.replace(new RegExp(',', 'g'), '');
         console.log(dislikes);
         localStorage.setItem("dislikeList", dislikes);
     }
-    
+
     doOverride();
 }
 
@@ -284,7 +320,7 @@ if(typeof(Storage) !== "undefined") {
 
 function doPlayPause(){
     var playing = player.isPlaying();
-    
+
     if (playing){
         player.pause();
         play_pause.innerHTML = '<img src="http://www.flaticon.com/png/256/25226.png" alt="Play" width="30" height="30">';
@@ -317,4 +353,4 @@ window.onkeydown = function (e) {
     } else if (code === 188) { //< key
         doPlayPrevious();
     }
-        };
+};
