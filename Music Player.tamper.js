@@ -135,6 +135,7 @@ document.body.appendChild(elemDiv);
 
 var frontDiv = document.createElement('div');
 frontDiv.className += ' front';
+frontDiv.style.cssTxt = "cursor: hand";
 var para = document.createElement("p");
 para.style.cssText = 'padding-top:10px;padding-bottom:10px;font-weight:bold;font-family:Arial,Helvetica,sans-serif;-webkit-transform: translateY(5px);';
 para.style.cssText += 'color:#FFF;font-size: 16px;';
@@ -147,8 +148,9 @@ frontDiv.appendChild(para);
 //Dislike
 var backDiv = document.createElement('div');
 backDiv.className += ' back';
+backDiv.style.cssTxt = "cursor: hand";
 var dislike = document.createElement("a");
-dislike.style.cssText = '-webkit-filter: invert(100%);cursor: pointer; cursor: hand;';
+dislike.style.cssText = '-webkit-filter: invert(100%);cursor: pointer;';
 dislike.innerHTML = '<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Thumbs_down_font_awesome.svg/512px-Thumbs_down_font_awesome.svg.png" alt="Dislike" width="32" height="32">';
 dislike.addEventListener('click',doDislike,false);
 backDiv.appendChild(dislike);
