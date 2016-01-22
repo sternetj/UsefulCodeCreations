@@ -57,12 +57,12 @@ var mines = {'1':[],'2':[],'3':[],'4':[],'5':[],'6':[],'7':[],'8':[]};
 $(".open1, .open2, .open3, .open4, .open5, .open6, .open7, .open8")
 	.each(function (ii) {
 		var c = $(this);
-		var row = c.attr('id').split("_")[0];
-		var col = c.attr('id').split("_")[1];
+		var row = parseInt(c.attr('id').split("_")[0]);
+		var col = parseInt(c.attr('id').split("_")[1]);
 		//console.log(c);
 // for(var row = 1; row <= boardRows; row++){
 // 	for(var col = 1; col <= boardCols; col++){
-		var c = $("#" + row + "_" + col);
+// 		var c = $("#" + row + "_" + col);
 		var n = getNeighborsByType(row, col);
 		var mineType = 1;
 		if(c.hasClass("open1")){
