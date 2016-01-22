@@ -93,35 +93,19 @@ for(var row = 1; row <= boardRows; row++){
 // });
 
 if(!clicked){
-	// for (var i = 1; i <= 8; i++) {
-	// 	if(mines[i].length > 0){
-	// 		var indx = Math.floor(Math.random() * (mines[i].length - 1));
-	// 		$(document).trigger({
-	// 			type:'mouseup',
-	// 			button:1,
-	// 			target:(mines[i][indx][0])
-	// 		});
-	// 		i = 9;
-	// 	}
-	// }
-	if(mines[1].length > 0){
-		var indx = Math.floor(Math.random() * (mines[1].length - 1));
-		$(document).trigger({
-			type:'mouseup',
-			button:1,
-			target:(mines[1][indx][0])
-		});
-	}else{
+	var unopened = $(".blank");
 
-		var unopened = $(".blank");
-		var indx = Math.floor(Math.random() * (unopened.length - 1));
-		console.log(unopened[indx]);
-		$(document).trigger({
-			type:'mouseup',
-			button:1,
-			target:(unopened[indx])
-		});
+	for (var i = 1; i <= 8; i++) {
+		unopened = unopened.not(mines[i]);
 	}
+
+	var indx = Math.floor(Math.random() * (unopened.length - 1));
+	//console.log(unopened[indx]);
+	$(document).trigger({
+		type:'mouseup',
+		button:1,
+		target:(unopened[indx])
+	});
 }
 
 },1);
