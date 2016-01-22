@@ -1,10 +1,12 @@
 setInterval(function() {
+var boardRows = 16,
+	boardCols = 30;
 
 function getNeighborsByType (row, col) {
 	var blankNeighbors = [];
 	var bombNeighbors = []
-	for (var subR = Math.max(row - 1,1); subR <= Math.min(row + 1, 16); subR++){
-		for (var subC = Math.max(col - 1,1); subC <= Math.min(col + 1, 30); subC++){
+	for (var subR = Math.max(row - 1,1); subR <= Math.min(row + 1, boardRows); subR++){
+		for (var subC = Math.max(col - 1,1); subC <= Math.min(col + 1, boardCols); subC++){
 			var subCell = $("#" + subR + "_" + subC);
 			if(subCell.hasClass("bombflagged")){
 				bombNeighbors.push(subCell);
@@ -37,59 +39,89 @@ function doClicks (n, squareNum) {
 	return clicked;
 }
 
+if($(".bombdeath").length > 0){
+	$(document).trigger({
+			type:'mousedown',
+			button:1,
+			target:($("#face")[0])
+		}).trigger({
+			type:'mouseup',
+			button:1,
+			target:($("#face")[0])
+		});
+	return;
+}
+
 var clicked = false;
 var mines = {'1':[],'2':[],'3':[],'4':[],'5':[],'6':[],'7':[],'8':[]};
-$(".open1, .open2, .open3, .open4, .open5, .open6, .open7, .open8")
-	.each(function (ii) {
-		var c = $(this);
-		var row = c.attr('id').split("_")[0];
-		var col = c.attr('id').split("_")[1];
-		console.log(row + "_" + col);
-// for(var row = 1; row <= 16; row++){
-// 	for(var col = 1; col <= 30; col++){
-// 		var c = $("#" + row + "_" + col);
+// $(".open1, .open2, .open3, .open4, .open5, .open6, .open7, .open8")
+// 	.each(function (ii) {
+// 		var c = $(this);
+// 		var row = c.attr('id').split("_")[0];
+// 		var col = c.attr('id').split("_")[1];
+		//console.log(c);
+for(var row = 1; row <= boardRows; row++){
+	for(var col = 1; col <= boardCols; col++){
+		var c = $("#" + row + "_" + col);
 		var n = getNeighborsByType(row, col);
+		var mineType = 1;
 		if(c.hasClass("open1")){
-			clicked = clicked || doClicks(n, 1);
-			mines[1].concat(n.blank);
+			mineType = 1;
 		}else if(c.hasClass("open2")){
-			clicked = clicked || doClicks(n, 2);
-			mines[2].concat(n.blank);
+			mineType = 2;
 		}else if(c.hasClass("open3")){
-			clicked = clicked || doClicks(n, 3);
-			mines[3].concat(n.blank);
+			mineType = 3;
 		}else if(c.hasClass("open4")){
-			clicked = clicked || doClicks(n, 4);
-			mines[4].concat(n.blank);
+			mineType = 4;
 		}else if(c.hasClass("open5")){
-			clicked = clicked || doClicks(n, 5);
-			mines[5].concat(n.blank);
+			mineType = 5;
 		}else if(c.hasClass("open6")){
-			clicked = clicked || doClicks(n, 6);
-			mines[6].concat(n.blank);
+			mineType = 6;
 		}else if(c.hasClass("open7")){
-			clicked = clicked || doClicks(n, 7);
-			mines[7].concat(n.blank);
+			mineType = 7;
 		}else if(c.hasClass("open8")){
-			clicked = clicked || doClicks(n, 8);
-			mines[8].concat(n.blank);
+			mineType = 8;
+		}else {
+			continue;
 		}
-// 	}
-// }
 
-});;
-
-if(!clicked){
-	console.log("stuck");
-	console.log(mines);
-	for (var i = 1; i <= 8; i++) {
-		if(mines[i].length > 0){
-			console.log("click a: " + i);
-			var indx = Math.floor(Math.random() * (mines[i].length - 1)) + 1;
-			$(document).trigger({type:'mouseup', button:1, target:(mines[i][indx])});
-			i = 9;
-		}
+		clicked = clicked || doClicks(n, mineType);
+		mines[mineType] = mines[mineType].concat(n.blank);
 	}
 }
 
-},50);
+// });
+
+if(!clicked){
+	// for (var i = 1; i <= 8; i++) {
+	// 	if(mines[i].length > 0){
+	// 		var indx = Math.floor(Math.random() * (mines[i].length - 1));
+	// 		$(document).trigger({
+	// 			type:'mouseup',
+	// 			button:1,
+	// 			target:(mines[i][indx][0])
+	// 		});
+	// 		i = 9;
+	// 	}
+	// }
+	if(mines[1].length > 0){
+		var indx = Math.floor(Math.random() * (mines[1].length - 1));
+		$(document).trigger({
+			type:'mouseup',
+			button:1,
+			target:(mines[1][indx][0])
+		});
+	}else{
+
+		var unopened = $(".blank");
+		var indx = Math.floor(Math.random() * (unopened.length - 1));
+		console.log(unopened[indx]);
+		$(document).trigger({
+			type:'mouseup',
+			button:1,
+			target:(unopened[indx])
+		});
+	}
+}
+
+},1);
