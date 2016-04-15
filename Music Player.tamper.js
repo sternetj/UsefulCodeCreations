@@ -69,7 +69,7 @@ var notify = function(){
             },120000);
         }
     }
-}
+};
 
 var head = document.head || document.getElementsByTagName('head')[0],
     style = document.createElement('style');
@@ -111,16 +111,12 @@ for (var i = 0; i < links.length; i++) {
 
 links = nonDups;
 
-// create click event
-var theEvent = document.createEvent("MouseEvent");
-theEvent.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
-
 //get first index
 var items = makeItemArray();
 var index = getRandom();
 
 //click the first link
-links[index].dispatchEvent(theEvent);
+$(links[index]).click();
 notify();
 
 console.log(links[index]);
@@ -164,8 +160,6 @@ flipperDiv.appendChild(frontDiv);
 flipperDiv.appendChild(backDiv);
 containDiv.appendChild(flipperDiv);
 elemDiv.appendChild(containDiv);
-
-
 
 var linkStyle = 'padding-top:10px;cursor: pointer; cursor: hand;font-size: 20px;-webkit-filter: invert(100%);';
 //Back Arrow
@@ -252,7 +246,7 @@ function musicplayer1()
         song_string.nodeValue = 'Song: ' + (links.length - items.length + Math.max(-1*toPlay.length, 0)) + ' of ' + links.length;
 
         //Click on the new song to have it start playing
-        links[index].dispatchEvent(theEvent);
+        $(links[index]).click();
 
         notify();
 
@@ -264,7 +258,7 @@ function musicplayer1()
 
 function makeItemArray(){
     var itemArray = [];
-    for (var i = 0; i < links.length; i++) { 
+    for (var i = 0; i < links.length; i++) {
         itemArray.push(i);
     }
     return itemArray;
@@ -272,7 +266,7 @@ function makeItemArray(){
 
 //Gets random from index array, removes it, and returns index
 function getRandom(){
-    if (items.length == 0){
+    if (items.length === 0){
         var nonDups = [];
         for (var i = 0; i < links.length; i++) {
             for (var j = 0; j < links.length; j++) {
@@ -285,11 +279,11 @@ function getRandom(){
         links = nonDups;
         items = makeItemArray();
     }
-    var i = Math.floor(Math.random()*items.length);
-    var item = items[i];
-    items.splice(i, 1);
+    var randomIndex = Math.floor(Math.random()*items.length);
+    var item = items[randomIndex];
+    items.splice(randomIndex, 1);
 
-    return item;  
+    return item;
 }
 
 function doOverride(){
@@ -305,7 +299,7 @@ function doDislike(){
         dislikes = localStorage.dislikeList.split(',');
         console.log(dislikes);
 
-        dislikes += ((dislikes == "") ? '' : ',') + links[index].title.replace(new RegExp(',', 'g'), '');
+        dislikes += ((dislikes === "") ? '' : ',') + links[index].title.replace(new RegExp(',', 'g'), '');
         console.log(dislikes);
         localStorage.setItem("dislikeList", dislikes);
     }
