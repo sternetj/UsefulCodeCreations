@@ -42,10 +42,10 @@ transform: rotateY(180deg);
 
 document.addEventListener('DOMContentLoaded',
                           function () {
-                              if (Notification && Notification.permission !== "granted"){
-                                  Notification.requestPermission();
-                              }
-                          });
+    if (Notification && Notification.permission !== "granted"){
+        Notification.requestPermission();
+    }
+});
 
 var notify = function(){
     if (Notification){
@@ -196,11 +196,13 @@ function musicplayer1()
 {
     var playing = fplayer.playing;
     var paused = fplayer.paused;
+    var songIsFinished = Math.floor(fplayer.video.time) === Math.floor(fplayer.video.duration);
 
     if (override){
         playing = false;
         paused = false;
         override = false;
+        songIsFinished = true;
     }
     if (playing){
 
@@ -222,7 +224,7 @@ function musicplayer1()
             }
 
         }
-    } else if (Math.floor(fplayer.video.time) === Math.floor(fplayer.video.duration)){
+    } else if (songIsFinished){
         olderIndex = index; // Set the last played song to allow for repeating songs
 
         //Check for songs to be played and play them first if they exist
