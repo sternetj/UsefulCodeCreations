@@ -1,44 +1,44 @@
 // ==UserScript==
 // @name       Music Player
-// @namespace  http://www.allaccess.com/top40-mainstream/cool-new-music
+// @namespace  https://www.allaccess.com/top40-mainstream/cool-new-music
 // @version    2.0
 // @description  Allows you to control the player on allaccess.com. Also allows for continuous playing.
-// @match      http://www.allaccess.com/*/cool-new-music
+// @match      https://www.allaccess.com/*/cool-new-music
 // @copyright  2012+, You
 // ==/UserScript==
-var css = '.flip-container { \
-perspective: 1000; \
-width: 50%; \
-margin: 0 auto; \
-padding-bottom: 5px; \
-} \
-.flip-container:hover .flipper, .flip-container.hover .flipper { \
-transform: rotateY(180deg); \
-} \
-.flip-container, .front, .back { \
-text-align:center; \
-width: 142px; \
-height: 48px; \
-} \
-.flipper { \
-transition: 0.6s; \
-transform-style: preserve-3d; \
-position: relative; \
-} \
-.front, .back { \
-backface-visibility: hidden; \
-position: absolute; \
-top: 0; \
-left: 0; \
-} \
-.front { \
-z-index: 2; \
-/* for firefox 31 */ \
-transform: rotateY(0deg); \
-} \
-.back { \
-transform: rotateY(180deg); \
-}';
+var css = `.flip-container {
+perspective: 1000;
+width: 50%;
+margin: 0 auto;
+padding-bottom: 5px;
+}
+.flip-container:hover .flipper, .flip-container.hover .flipper {
+transform: rotateY(180deg);
+}
+.flip-container, .front, .back {
+text-align:center;
+width: 142px;
+height: 48px;
+}
+.flipper {
+transition: 0.6s;
+transform-style: preserve-3d;
+position: relative;
+}
+.front, .back {
+backface-visibility: hidden;
+position: absolute;
+top: 0;
+left: 0;
+}
+.front {
+z-index: 2;
+/* for firefox 31 */
+transform: rotateY(0deg);
+}
+.back {
+transform: rotateY(180deg);
+}`;
 
 document.addEventListener('DOMContentLoaded',
                           function () {
@@ -57,7 +57,7 @@ var notify = function(){
             var artist = info[1];
             console.log(links[index].parentNode);
             console.log(links[index].parentNode.nextSibling.nextSibling);
-            var image = links[index].parentNode.nextSibling.nextSibling.src;
+            var image = links[index].parentNode.nextSibling.nextSibling.firstElementChild.src;
             var nt = new Notification(track, {
                 icon: image,
                 body: 'by ' + artist,
@@ -147,7 +147,7 @@ backDiv.className += ' back';
 backDiv.style.cssTxt = "cursor: hand";
 var dislike = document.createElement("a");
 dislike.style.cssText = '-webkit-filter: invert(100%);cursor: pointer;';
-dislike.innerHTML = '<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Thumbs_down_font_awesome.svg/512px-Thumbs_down_font_awesome.svg.png" alt="Dislike" width="32" height="32">';
+dislike.innerHTML = '<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Thumbs_down_font_awesome.svg/512px-Thumbs_down_font_awesome.svg.png" alt="Dislike" width="32" height="32">';
 dislike.addEventListener('click',doDislike,false);
 backDiv.appendChild(dislike);
 
@@ -165,21 +165,21 @@ var linkStyle = 'padding-top:10px;cursor: pointer; cursor: hand;font-size: 20px;
 //Back Arrow
 var back = document.createElement("a");
 back.style.cssText = linkStyle + 'padding-right:-5px;';
-back.innerHTML = '<img src="http://www.flaticon.com/png/256/25641.png" alt="Prev" width="44" height="30">';
+back.innerHTML = '<img src="https://www.flaticon.com/png/256/25641.png" alt="Prev" width="44" height="30">';
 back.addEventListener('click',doPlayPrevious,false);
 elemDiv.appendChild(back);
 
 //Play\Pause
 var play_pause = document.createElement("a");
 play_pause.style.cssText = linkStyle + 'padding-right:-5px;';
-play_pause.innerHTML = '<img src="http://www.flaticon.com/png/256/25696.png" alt="Pause" width="44" height="30">';
+play_pause.innerHTML = '<img src="https://www.flaticon.com/png/256/25696.png" alt="Pause" width="44" height="30">';
 play_pause.addEventListener('click',doPlayPause,false);
 elemDiv.appendChild(play_pause);
 
 //Next
 var next = document.createElement("a");
 next.style.cssText = linkStyle;
-next.innerHTML = '<img src="http://www.flaticon.com/png/256/25309.png" alt="Prev" width="44" height="30">';
+next.innerHTML = '<img src="https://www.flaticon.com/png/256/25309.png" alt="Prev" width="44" height="30">';
 next.addEventListener('click',doOverride,false);
 elemDiv.appendChild(next);
 
@@ -194,9 +194,8 @@ played.push(index);
 
 function musicplayer1()
 {
-    var playing = player.isPlaying();
-    var paused = player.isPaused();
-    //alert(player.getPlaylist()[0]['fullDuration']);
+    var playing = fplayer.playing;
+    var paused = fplayer.paused;
 
     if (override){
         playing = false;
@@ -206,14 +205,14 @@ function musicplayer1()
     if (playing){
 
         //Change image to pause button
-        play_pause.innerHTML = '<img src="http://www.flaticon.com/png/256/25696.png" alt="Pause" width="30" height="30">';
+        play_pause.innerHTML = '<img src="https://www.flaticon.com/png/256/25696.png" alt="Pause" width="30" height="30">';
 
         if (durationSet){
             setTimeout(musicplayer1, 10000);
         }
         else{
             try {
-                var delay = parseFloat(player.getClip()['fullDuration']) * 1000;
+                var delay = parseFloat(fplayer.video.duration) * 1000;
                 delay = delay - 10000;
                 setTimeout(musicplayer1, delay);
                 durationSet = true;
@@ -223,13 +222,7 @@ function musicplayer1()
             }
 
         }
-    }
-    else if (paused){
-        //Change image to play button
-        play_pause.innerHTML = '<img src="http://www.flaticon.com/png/256/25226.png" alt="Play" width="30" height="30">';
-        setTimeout(musicplayer1, 10000);
-    }
-    else{
+    } else if (Math.floor(fplayer.video.time) === Math.floor(fplayer.video.duration)){
         olderIndex = index; // Set the last played song to allow for repeating songs
 
         //Check for songs to be played and play them first if they exist
@@ -252,6 +245,10 @@ function musicplayer1()
 
         durationSet = false;
 
+        setTimeout(musicplayer1, 10000);
+    } else if (paused){
+        //Change image to play button
+        play_pause.innerHTML = '<img src="https://www.flaticon.com/png/256/25226.png" alt="Play" width="30" height="30">';
         setTimeout(musicplayer1, 10000);
     }
 }
@@ -315,15 +312,15 @@ if(typeof(Storage) !== "undefined") {
 }
 
 function doPlayPause(){
-    var playing = player.isPlaying();
+    var playing = fplayer.playing;
 
     if (playing){
-        player.pause();
-        play_pause.innerHTML = '<img src="http://www.flaticon.com/png/256/25226.png" alt="Play" width="30" height="30">';
+        fplayer.pause();
+        play_pause.innerHTML = '<img src="https://www.flaticon.com/png/256/25226.png" alt="Play" width="30" height="30">';
     }
     else {
-        player.play();
-        play_pause.innerHTML = '<img src="http://www.flaticon.com/png/256/25696.png" alt="Pause" width="30" height="30">';
+        fplayer.play();
+        play_pause.innerHTML = '<img src="https://www.flaticon.com/png/256/25696.png" alt="Pause" width="30" height="30">';
     }
     musicplayer1();
 }
