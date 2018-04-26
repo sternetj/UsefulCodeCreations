@@ -7,37 +7,36 @@
 // @copyright  2012+, You
 // ==/UserScript==
 var css = `.flip-container {
-perspective: 1000;
-width: 50%;
-margin: 0 auto;
-padding-bottom: 5px;
+  perspective: 1000;
+  width: 50%;
+  margin: 0 auto;
+  padding-bottom: 5px;
 }
 .flip-container:hover .flipper, .flip-container.hover .flipper {
-transform: rotateY(180deg);
+  transform: rotateY(180deg);
 }
 .flip-container, .front, .back {
-text-align:center;
-width: 142px;
-height: 48px;
+  text-align:center;
+  width: 142px;
+  height: 48px;
 }
 .flipper {
-transition: 0.6s;
-transform-style: preserve-3d;
-position: relative;
+  transition: 0.6s;
+  transform-style: preserve-3d;
+  position: relative;
 }
 .front, .back {
-backface-visibility: hidden;
-position: absolute;
-top: 0;
-left: 0;
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
 }
 .front {
-z-index: 2;
-/* for firefox 31 */
-transform: rotateY(0deg);
+  z-index: 2;
+  transform: rotateY(0deg);
 }
 .back {
-transform: rotateY(180deg);
+  transform: rotateY(180deg);
 }`;
 
 document.addEventListener('DOMContentLoaded',
@@ -55,9 +54,9 @@ var notify = function(){
             var info = links[index].title.replace("Listen to '", "").split("' by ");
             var track = info[0];
             var artist = info[1];
-            console.log(links[index].parentNode);
-            console.log(links[index].parentNode.nextSibling.nextSibling);
-            var image = links[index].parentNode.nextSibling.nextSibling.firstElementChild.src;
+            var container = links[index].parentNode.parentNode.parentNode.parentNode.children[1];
+            var image = container && container.firstChild && container.firstChild.src;
+            image = image || links[index].parentNode.nextSibling.nextSibling.firstElementChild.src;
             var nt = new Notification(track, {
                 icon: image,
                 body: 'by ' + artist,
@@ -85,7 +84,7 @@ head.appendChild(style);
 
 // get all 'play' class links
 var mainBlock = document.getElementById( 'mainBlock' );
-var links = document.getElementsByClassName('play'); // get all links 
+var links = document.getElementsByClassName('play'); // get all links
 
 if (mainBlock != null){
     links = mainBlock.getElementsByClassName('play'); // get all links
@@ -187,13 +186,15 @@ var override = false;
 var played = [];
 var toPlay = [];
 var olderIndex = -1;
-var durationSet = false;
+var timeoutId = null;
 
 played.push(index);
 
 
 function musicplayer1()
 {
+    clearTimeout(timeoutId);
+
     var playing = fplayer.playing;
     var paused = fplayer.paused;
     var songIsFinished = Math.floor(fplayer.video.time) === Math.floor(fplayer.video.duration);
@@ -208,22 +209,7 @@ function musicplayer1()
 
         //Change image to pause button
         play_pause.innerHTML = '<img src="https://www.flaticon.com/png/256/25696.png" alt="Pause" width="30" height="30">';
-
-        if (durationSet){
-            setTimeout(musicplayer1, 10000);
-        }
-        else{
-            try {
-                var delay = parseFloat(fplayer.video.duration) * 1000;
-                delay = delay - 10000;
-                setTimeout(musicplayer1, delay);
-                durationSet = true;
-            }
-            catch(err) {
-                durationSet = false;
-            }
-
-        }
+        timeoutId = setTimeout(musicplayer1, ((Math.floor(fplayer.video.duration) - Math.floor(fplayer.video.time)) * 1000) || 10000);
     } else if (songIsFinished){
         olderIndex = index; // Set the last played song to allow for repeating songs
 
@@ -245,13 +231,11 @@ function musicplayer1()
 
         notify();
 
-        durationSet = false;
-
-        setTimeout(musicplayer1, 10000);
+        timeoutId = setTimeout(musicplayer1, 10000);
     } else if (paused){
         //Change image to play button
         play_pause.innerHTML = '<img src="https://www.flaticon.com/png/256/25226.png" alt="Play" width="30" height="30">';
-        setTimeout(musicplayer1, 10000);
+        timeoutId = setTimeout(musicplayer1, 10000);
     }
 }
 
@@ -319,11 +303,11 @@ function doPlayPause(){
     if (playing){
         fplayer.pause();
         play_pause.innerHTML = '<img src="https://www.flaticon.com/png/256/25226.png" alt="Play" width="30" height="30">';
-    }
-    else {
+    } else {
         fplayer.play();
         play_pause.innerHTML = '<img src="https://www.flaticon.com/png/256/25696.png" alt="Pause" width="30" height="30">';
     }
+
     musicplayer1();
 }
 
